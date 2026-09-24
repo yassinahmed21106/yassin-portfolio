@@ -52,7 +52,7 @@
 
   <section id="view-media" class="view" hidden>
     <div class="view-title media-title"><div><span class="eyebrow">SHARED ASSETS</span><h3>Media Library</h3><p>Existing site assets and newly uploaded files appear here.</p></div><label class="btn primary upload-btn">+ Upload Media<input id="library-upload" type="file" accept="image/*,video/*" multiple hidden></label></div>
-    <div id="media-status" class="status"></div><div id="media-grid" class="media-grid"></div>
+    <div id="media-status" class="status"></div><div id="upload-progress" class="upload-progress" hidden><div class="upload-progress-head"><strong id="upload-progress-title">Uploading media: 0%</strong><span id="upload-progress-count">0 / 0 files uploaded</span></div><div class="progress-track"><div id="upload-progress-bar" class="progress-bar"></div></div><div id="upload-progress-remaining" class="upload-progress-remaining">0 files remaining</div><div id="upload-progress-files" class="upload-file-list"></div><button id="retry-failed" type="button" class="btn secondary mini" hidden>Retry failed uploads</button></div><div id="media-grid" class="media-grid"></div>
   </section>
 </main>
 </section>
@@ -64,9 +64,10 @@
   <div id="new-group-box" hidden><label>New group name<input id="p-new-group" placeholder="e.g. Motion"></label></div>
   <label>Description<textarea id="p-description" rows="4"></textarea></label>
   <div class="grid2"><label>Behance / Project URL<input id="p-url" type="url"></label><label>Tags<input id="p-tags" placeholder="branding, identity, logo"></label></div>
+  <section class="asset spacing-setting"><div class="asset-head"><h4>Content Spacing</h4><span><output id="p-spacing-value">32</output> px</span></div><label class="range-label" for="p-spacing">Vertical space between content blocks<input id="p-spacing" type="range" min="0" max="120" step="4" value="32"></label><div id="spacing-preview" class="spacing-preview"><span></span><span></span></div></section>
   <section class="asset"><div class="asset-head"><h4>Cover</h4><span>One image</span></div><div id="cover" class="cover">No cover selected</div><div class="actions"><label class="btn secondary">Upload / Replace<input id="cover-upload" type="file" accept="image/*" hidden></label><button type="button" class="btn secondary" id="cover-library">Choose Existing</button><button type="button" class="btn danger" id="cover-remove">Remove</button></div></section>
   <section class="asset"><div class="asset-head"><h4>Gallery</h4><span>Unlimited images & videos</span></div><div id="gallery" class="gallery"></div><div class="actions"><label class="btn secondary">Add Files<input id="gallery-upload" type="file" accept="image/*,video/*" multiple hidden></label><button type="button" class="btn secondary" id="gallery-library">Choose Existing</button></div></section>
-  <div id="project-error" class="error"></div>
+  <div id="project-upload-status" class="status"></div><div id="project-error" class="error"></div>
 </div><footer><button type="button" class="btn ghost" data-close="project-modal">Cancel</button><button class="btn primary" type="submit">Save Project</button></footer></form></div>
 
 <div id="section-modal" class="modal" hidden><form id="section-form" class="dialog"><header><div><span class="eyebrow">SECTION EDITOR</span><h2 id="section-title">New Section</h2></div><button type="button" class="close" data-close="section-modal">×</button></header><div class="body">
