@@ -11,6 +11,7 @@ create table if not exists public.projects (
   description  text not null default '',
   cover_image  text,
   images       jsonb not null default '[]'::jsonb,
+  content_spacing integer check (content_spacing between 0 and 120),
   project_url  text,
   year         text,
   tags         text[] not null default '{}',
@@ -23,6 +24,10 @@ create table if not exists public.projects (
 
 create index if not exists projects_published_order_idx
   on public.projects (published, section, sort_order);
+
+-- Adds project-level Behance-style content spacing to existing databases.
+alter table public.projects
+  add column if not exists content_spacing integer check (content_spacing between 0 and 120);
 
 -- Keep updated_at current on every edit.
 create or replace function public.set_updated_at()
