@@ -157,9 +157,11 @@
     const entries = projectMedia(project);
     entries.forEach((entry, i) => gallery.appendChild(mediaElement(project, entry, i)));
 
-    // If the project has no uploaded gallery yet, keep the cover as the first item.
-    if (!entries.length) {
-      gallery.appendChild(mediaElement(project, { url: project.cover_image, type: 'image' }, 0));
+    // The cover already renders once above as the hero image (coverWrap) — it must
+    // never be re-added into the gallery feed. Only additional gallery/video items
+    // (anything the project has beyond its cover) belong here.
+    if (project.content_spacing != null && !Number.isNaN(Number(project.content_spacing))) {
+      gallery.style.gap = Number(project.content_spacing) + 'px';
     }
 
     inner.appendChild(gallery);
