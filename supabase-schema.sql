@@ -178,6 +178,11 @@ on conflict (slug) do nothing;
 alter table public.projects drop constraint if exists projects_section_check;
 alter table public.projects add column if not exists videos jsonb not null default '[]'::jsonb;
 
+-- Per-project vertical spacing between gallery content blocks (px), editable
+-- from the CMS like Behance's spacing control. Null = existing/default look,
+-- so old projects keep their current appearance until explicitly changed.
+alter table public.projects add column if not exists content_spacing integer;
+
 -- ---------------------------------------------------------------
 -- Media Library — every uploaded file (image or video), reusable
 -- across sections and projects. One upload system, one table.
