@@ -36,12 +36,9 @@
   }
 
   function projectMedia(project) {
-    const coverUrl = project.cover_image || '';
     const images = normalizeMedia(project.images);
     const videos = normalizeMedia(project.videos);
-    // The cover is a hero-only asset. Legacy projects may still have it in
-    // their gallery data, so filter it at the data/render boundary as well.
-    return images.concat(videos).filter(entry => !coverUrl || entry.url !== coverUrl);
+    return images.concat(videos);
   }
 
   function coverNode(project, extraClass) {
@@ -156,14 +153,14 @@
 
     const gallery = document.createElement('div');
     gallery.className = 'project-gallery';
-    if (Number.isFinite(Number(project.content_spacing))) {
-      const spacing = Math.max(0, Math.min(120, Number(project.content_spacing)));
-      gallery.style.setProperty('--project-content-gap', spacing + 'px');
-    }
 
     const entries = projectMedia(project);
     entries.forEach((entry, i) => gallery.appendChild(mediaElement(project, entry, i)));
 
+    // If the project has no uploaded gallery yet, keep the cover as the first item.
+    if (!entries.length) {
+      gallery.appendChild(mediaElement(project, { url: project.cover_image, type: 'image' }, 0));
+    }
 
     inner.appendChild(gallery);
 

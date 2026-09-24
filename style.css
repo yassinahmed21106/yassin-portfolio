@@ -568,7 +568,7 @@ input, select, textarea{ font: inherit; color: inherit; }
 /* The actual project feed: one large media piece after another, like a Behance case study. */
 .project-gallery{
   width:min(100%, 980px); margin:0 auto;
-  display:flex; flex-direction:column; gap:var(--project-content-gap,clamp(1.5rem,4vw,3.5rem));
+  display:flex; flex-direction:column; gap:clamp(1.5rem,4vw,3.5rem);
 }
 .project-gallery-item{
   position:relative; display:block; width:100%;
@@ -604,7 +604,7 @@ input, select, textarea{ font: inherit; color: inherit; }
   .project-page-cover{ border-radius:8px; margin-bottom:2.5rem; }
   .project-page-head{ margin-bottom:3rem; }
   .project-page-head h2{ font-size:clamp(2rem,11vw,3rem); }
-  .project-gallery{ gap:var(--project-content-gap,1rem); }
+  .project-gallery{ gap:1rem; }
   .project-gallery-item{ border-radius:8px; }
   .project-page-video{ min-height:170px; }
 }
