@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Yassin Ahmed — Graphic Designer</title>
+  <meta name="description" content="Yassin Ahmed is an independent Graphic Designer based in Cairo, Egypt, specializing in distinctive visual identities, brand experiences, and social media design.">
+  
+  <!-- Favicon System (YA Monogram Minimal Geometric) -->
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16x16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
+  
+  <!-- Google Fonts Preconnect -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- ==========================================================================
+       1. CONTINUOUS CINEMATIC PORTRAIT STAGE (FIXED THROUGHOUT SCROLL EXPERIENCE)
+       ========================================================================== -->
+  <div class="portrait-stage-fixed" id="portraitStage" aria-hidden="true">
+    <canvas id="heroCanvas"></canvas>
+    <div class="portrait-stage-overlay"></div>
+  </div>
+
+  <!-- Ambient Background Lighting -->
+  <div class="bg-atmosphere" aria-hidden="true">
+    <div class="bg-grid"></div>
+    <div class="bg-glow-top"></div>
+    <div class="bg-glow-mid"></div>
+    <div class="bg-glow-violet"></div>
+    <div class="bg-glow-magenta"></div>
+  </div>
+
+  <!-- Minimal Initial Preloader -->
+  <div class="site-loader" id="siteLoader" aria-hidden="true">
+    <div class="loader-track">
+      <div class="loader-fill" id="loaderFill"></div>
+    </div>
+    <div class="loader-meta" id="loaderMeta">0%</div>
+  </div>
+
+  <!-- ==========================================================================
+       SITE HEADER / MINIMAL NAVIGATION
+       ========================================================================== -->
+  <header class="site-header">
+    <div class="container nav-container">
+      <a href="#home" class="site-logo" aria-label="Yassin Ahmed Homepage">
+        YASSIN AHMED<span>.</span>
+      </a>
+
+      <nav aria-label="Main Navigation">
+        <ul class="nav-links" id="navLinks">
+          <li><a href="#home" class="nav-link active">Home</a></li>
+          <li><a href="#about" class="nav-link">About</a></li>
+          <li><a href="#work" class="nav-link">Work</a></li>
+          <li><a href="#services" class="nav-link">Services</a></li>
+          <li><a href="#experience" class="nav-link">Experience</a></li>
+          <li><a href="#contact" class="nav-link">Contact</a></li>
+        </ul>
+      </nav>
+
+      <button class="menu-toggle" id="menuToggle" type="button" aria-label="Toggle navigation menu" aria-expanded="false">
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+  </header>
+
+  <main id="main">
+
+    <!-- ==========================================================================
+         HERO SECTION WITH PERSISTENT PORTRAIT SCROLL INTEGRATION
+         ========================================================================== -->
+    <div class="hero-scroll-runner" id="heroRunner">
+      <section class="hero-sticky-stage" id="home">
+        
+        <div class="container hero-content">
+          <div class="hero-inner reveal">
+            <span class="hero-eyebrow">INDEPENDENT GRAPHIC DESIGNER</span>
+            <h1 class="hero-title">YASSIN AHMED</h1>
+            <p class="hero-role">GRAPHIC DESIGNER</p>
+            <p class="hero-statement">
+              Creating distinctive visual identities and impactful brand experiences through thoughtful design and creative direction.
+            </p>
+            <div class="hero-actions">
+              <a href="#work" class="btn btn-primary">VIEW MY WORKS</a>
+              <button type="button" class="btn btn-outline" data-open-choice-modal>LET'S WORK TOGETHER</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="hero-scroll-cue" aria-hidden="true">
+          <span>SCROLL</span>
+          <div class="hero-scroll-line"></div>
+        </div>
+
+      </section>
+    </div>
+
+    <!-- ==========================================================================
+         ABOUT SECTION
+         ========================================================================== -->
+    <section class="editorial-section" id="about">
+      <div class="container">
+        
+        <div class="section-header reveal">
+          <span class="section-tag">About Me</span>
+          <h2 class="section-title">DESIGNING WITH PURPOSE.</h2>
+        </div>
+
+        <div class="about-grid">
+          <div class="about-narrative reveal">
+            <p class="about-lead">
+              I'm Yassin Ahmed, a Graphic Designer with over five years of experience creating distinctive visual identities, meaningful brand experiences, and engaging social media designs.
+            </p>
+            <p>
+              I specialize in creating complete visual identities that help brands communicate clearly and consistently. From logo design and brand guidelines to social media content and marketing materials, I focus on turning ideas into impactful visual experiences.
+            </p>
+            <p>
+              My approach combines creativity with strategic thinking. I believe good design isn't just about looking good — it's about communicating the right message to the right audience.
+            </p>
+          </div>
+
+          <aside class="about-meta-card reveal">
+            <div class="about-card-glow"></div>
+            <div class="meta-card-header">
+              <span class="meta-card-title">PROFILE OVERVIEW</span>
+              <span class="meta-card-status"><span class="status-dot"></span>AVAILABLE FOR PROJECTS</span>
+            </div>
+            <div class="meta-row">
+              <span class="meta-label">NAME</span>
+              <span class="meta-value">Yassin Ahmed</span>
+            </div>
+            <div class="meta-row">
+              <span class="meta-label">ROLE</span>
+              <span class="meta-value">Graphic Designer</span>
+            </div>
+            <div class="meta-row">
+              <span class="meta-label">LOCATION</span>
+              <span class="meta-value">Cairo, Egypt</span>
+            </div>
+            <div class="meta-row">
+              <span class="meta-label">EXPERIENCE</span>
+              <span class="meta-value highlight-value"><span class="counter-number" data-count-to="5">0</span>+ Years</span>
+            </div>
+            <div class="meta-row">
+              <span class="meta-label">SPECIALIZATION</span>
+              <span class="meta-value">Branding & Visual Identity</span>
+            </div>
+          </aside>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ==========================================================================
+         SELECTED WORK (5 DISTINCT CATEGORY SECTIONS WITH 3-COL GRID)
+         ========================================================================== -->
+    <section class="editorial-section" id="work">
+      <div class="container">
+        
+        <div class="section-header reveal">
+          <span class="section-tag">Portfolio</span>
+          <h2 class="section-title">SELECTED WORK.</h2>
+          <p style="color: var(--text-muted); font-size: 1.05rem; margin-top: 12px; max-width: 650px;">
+            A curated presentation of visual identities, social media campaigns, marketing collateral, and commercial video edits.
+          </p>
+        </div>
+
+        <!-- Populated with 5 distinct category groups, each featuring a 3-column project grid -->
+        <div id="selectedWorkCategories">
+          <!-- Populated from script.js & projects-data.js -->
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ==========================================================================
+         SERVICES SECTION
+         ========================================================================== -->
+    <section class="editorial-section" id="services">
+      <div class="container">
+        
+        <div class="section-header reveal">
+          <span class="section-tag">Capabilities</span>
+          <h2 class="section-title">DESIGN THAT BUILDS IDENTITY.</h2>
+        </div>
+
+        <div class="services-grid reveal-stagger">
+          
+          <article class="service-card" data-service-card>
+            <div class="service-card-glow"></div>
+            <div class="service-card-top">
+              <div class="service-num-wrap">
+                <span class="service-num" data-num="01"><span class="service-num-digit">0</span><span class="service-num-digit">1</span></span>
+              </div>
+              <div class="service-icon-pill">
+                <span class="service-pill-dot"></span>
+              </div>
+            </div>
+            <h3 class="service-title">BRANDING & VISUAL IDENTITY</h3>
+            <p class="service-desc">
+              Holistic visual identities engineered to endure. Complete systems spanning brand strategy, logo suites, typography rules, color architecture, and brand guidelines books.
+            </p>
+            <div class="service-card-footer">
+              <span class="service-accent-bar"></span>
+            </div>
+          </article>
+
+          <article class="service-card" data-service-card>
+            <div class="service-card-glow"></div>
+            <div class="service-card-top">
+              <div class="service-num-wrap">
+                <span class="service-num" data-num="02"><span class="service-num-digit">0</span><span class="service-num-digit">2</span></span>
+              </div>
+              <div class="service-icon-pill">
+                <span class="service-pill-dot"></span>
+              </div>
+            </div>
+            <h3 class="service-title">LOGO DESIGN</h3>
+            <p class="service-desc">
+              Memorable, conceptually grounded logo marks and custom typographic wordmarks tailored to communicate your core values with instant recognition and clarity.
+            </p>
+            <div class="service-card-footer">
+              <span class="service-accent-bar"></span>
+            </div>
+          </article>
+
+          <article class="service-card" data-service-card>
+            <div class="service-card-glow"></div>
+            <div class="service-card-top">
+              <div class="service-num-wrap">
+                <span class="service-num" data-num="03"><span class="service-num-digit">0</span><span class="service-num-digit">3</span></span>
+              </div>
+              <div class="service-icon-pill">
+                <span class="service-pill-dot"></span>
+              </div>
+            </div>
+            <h3 class="service-title">SOCIAL MEDIA DESIGN</h3>
+            <p class="service-desc">
+              High-engagement editorial carousels, striking feed layouts, and campaign collateral designed to capture attention and elevate your brand's digital authority.
+            </p>
+            <div class="service-card-footer">
+              <span class="service-accent-bar"></span>
+            </div>
+          </article>
+
+          <article class="service-card" data-service-card>
+            <div class="service-card-glow"></div>
+            <div class="service-card-top">
+              <div class="service-num-wrap">
+                <span class="service-num" data-num="04"><span class="service-num-digit">0</span><span class="service-num-digit">4</span></span>
+              </div>
+              <div class="service-icon-pill">
+                <span class="service-pill-dot"></span>
+              </div>
+            </div>
+            <h3 class="service-title">MARKETING MATERIALS</h3>
+            <p class="service-desc">
+              High-converting print and digital assets including pitch decks, editorial brochures, point-of-sale displays, packaging collateral, and promotional flyers.
+            </p>
+            <div class="service-card-footer">
+              <span class="service-accent-bar"></span>
+            </div>
+          </article>
+
+          <article class="service-card" data-service-card>
+            <div class="service-card-glow"></div>
+            <div class="service-card-top">
+              <div class="service-num-wrap">
+                <span class="service-num" data-num="05"><span class="service-num-digit">0</span><span class="service-num-digit">5</span></span>
+              </div>
+              <div class="service-icon-pill">
+                <span class="service-pill-dot"></span>
+              </div>
+            </div>
+            <h3 class="service-title">GRAPHIC DESIGN</h3>
+            <p class="service-desc">
+              Precision artworking, complex typographic layouts, digital manipulation, and cohesive graphic design solutions tailored for commercial applications.
+            </p>
+            <div class="service-card-footer">
+              <span class="service-accent-bar"></span>
+            </div>
+          </article>
+
+          <article class="service-card" data-service-card>
+            <div class="service-card-glow"></div>
+            <div class="service-card-top">
+              <div class="service-num-wrap">
+                <span class="service-num" data-num="06"><span class="service-num-digit">0</span><span class="service-num-digit">6</span></span>
+              </div>
+              <div class="service-icon-pill">
+                <span class="service-pill-dot"></span>
+              </div>
+            </div>
+            <h3 class="service-title">VIDEO EDITING</h3>
+            <p class="service-desc">
+              Rhythmic commercial video cutdowns, color grading, visual pacing, and social reel editing using Adobe Premiere Pro and CapCut to amplify brand storytelling.
+            </p>
+            <div class="service-card-footer">
+              <span class="service-accent-bar"></span>
+            </div>
+          </article>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ==========================================================================
+         EXPERIENCE + SKILLS SECTION
+         ========================================================================== -->
+    <section class="editorial-section" id="experience">
+      <div class="container">
+        
+        <div class="section-header reveal">
+          <span class="section-tag">Career & Expertise</span>
+          <h2 class="section-title">EXPERIENCE + SKILLS.</h2>
+        </div>
+
+        <div class="exp-skills-layout">
+          
+          <div class="experience-list reveal">
+            
+            <article class="experience-item">
+              <span class="exp-date">September 2026 – Present</span>
+              <h3 class="exp-role">Graphic Designer</h3>
+              <p class="exp-company">Orvix Marketing Agency · Cairo, Egypt</p>
+              <p class="exp-desc">
+                Responsibilities include graphic design, social media design, branding, visual identity, creative concepts, motion graphics/animations as employment responsibilities, video editing and marketing assets.
+              </p>
+            </article>
+
+            <article class="experience-item">
+              <span class="exp-date">January 2020 – Present</span>
+              <h3 class="exp-role">Freelance Graphic Designer</h3>
+              <p class="exp-company">Freelance · Cairo, Egypt</p>
+              <p class="exp-desc">
+                Brand identities, logos, social media, marketing materials and freelance work through Upwork, Freelancer and Khamsat.
+              </p>
+            </article>
+
+            <article class="experience-item">
+              <span class="exp-date">March 2021 – September 2024</span>
+              <h3 class="exp-role">Freelance Graphic Designer</h3>
+              <p class="exp-company">Freelancer.com</p>
+              <p class="exp-desc">
+                Graphic design and social media content for teachers and educational professionals.
+              </p>
+            </article>
+
+            <article class="experience-item">
+              <span class="exp-date">January 2023 – April 2024</span>
+              <h3 class="exp-role">Graphic Designer & Social Media Designer</h3>
+              <p class="exp-company">High Level Educational Center · Cairo, Egypt</p>
+              <p class="exp-desc">
+                Visual identity, social media, campaigns, advertisements and marketing materials.
+              </p>
+            </article>
+
+            <article class="experience-item">
+              <span class="exp-date">March 2021 – 2024</span>
+              <h3 class="exp-role">Freelance Graphic & Social Media Designer</h3>
+              <p class="exp-company">Independent / Self-Employed · Cairo, Egypt</p>
+              <p class="exp-desc">
+                Executing custom branding, logo commissions, marketing assets, and social media campaigns for independent businesses.
+              </p>
+            </article>
+
+          </div>
+
+          <div class="skills-column reveal">
+            
+            <div>
+              <h3 class="skills-group-title">Core Disciplines</h3>
+              <div class="skills-tag-grid">
+                <span class="skill-tag">Branding & Visual Identity</span>
+                <span class="skill-tag">Logo Design</span>
+                <span class="skill-tag">Social Media Design</span>
+                <span class="skill-tag">Marketing Materials</span>
+                <span class="skill-tag">Typography & Layout</span>
+                <span class="skill-tag">Artworking</span>
+                <span class="skill-tag">Image Design</span>
+                <span class="skill-tag">Computer Graphics Design</span>
+                <span class="skill-tag">Creative Direction</span>
+              </div>
+            </div>
+
+            <div>
+              <h3 class="skills-group-title">Software & Tools</h3>
+              <div class="skills-tag-grid">
+                <span class="skill-tag software-tag">Adobe Photoshop</span>
+                <span class="skill-tag software-tag">Adobe Illustrator</span>
+                <span class="skill-tag software-tag">Canva</span>
+                <span class="skill-tag software-tag">Adobe Premiere Pro</span>
+                <span class="skill-tag software-tag">CapCut</span>
+                <span class="skill-tag software-tag">Adobe InDesign</span>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ==========================================================================
+         EDUCATION & CERTIFICATES GALLERY (3–4 COLUMNS WITH FULL-VIEW MODAL)
+         ========================================================================== -->
+    <section class="editorial-section" id="education">
+      <div class="container">
+        
+        <div class="section-header reveal">
+          <span class="section-tag">Academic & Credentials</span>
+          <h2 class="section-title">EDUCATION & CERTIFICATES.</h2>
+        </div>
+
+        <div class="edu-block reveal">
+          <div class="edu-grid">
+            <article class="edu-card">
+              <span class="edu-period">First Year</span>
+              <h3 class="edu-degree">Helwan Technological University — Faculty of Industry and Energy Technology</h3>
+              <p class="edu-school">First Year</p>
+            </article>
+
+            <article class="edu-card">
+              <span class="edu-period">August 2023 – July 2026</span>
+              <h3 class="edu-degree">High School Diploma — General Secondary Education</h3>
+              <p class="edu-school">Taha Hemam Experimental Language School</p>
+            </article>
+          </div>
+        </div>
+
+        <div style="margin-bottom: 24px;">
+          <h3 class="category-group-title reveal">Professional Certifications</h3>
+          <p style="font-size: 0.9rem; color: var(--text-muted); margin-top: 6px;" class="reveal">
+            Click any certificate card to inspect the verified credential in high resolution with interactive zoom and pan.
+          </p>
+        </div>
+
+        <!-- 3–4 Per Row Desktop Certificate Gallery Grid -->
+        <div class="certs-gallery-grid" id="certGalleryGrid">
+          <!-- Populated from script.js -->
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ==========================================================================
+         CONTACT SECTION (WITH TIKTOK & CHOICE MODAL TRIGGER)
+         ========================================================================== -->
+    <section class="editorial-section contact-section" id="contact">
+      <div class="container">
+        
+        <div class="contact-content reveal cta-animated-wrap">
+          <span class="section-tag">Get in Touch</span>
+          <h2 class="contact-title" aria-label="Let's Create Something Meaningful.">
+            <span class="cta-line"><span class="cta-line-inner">LET'S CREATE</span></span>
+            <span class="cta-line"><span class="cta-line-inner">SOMETHING</span></span>
+            <span class="cta-line"><span class="cta-line-inner cta-highlight">MEANINGFUL.</span></span>
+          </h2>
+          <p class="contact-statement">
+            Have a project in mind? Let's discuss how thoughtful design can bring your ideas to life.
+          </p>
+
+          <div class="contact-channels-grid">
+            
+            <!-- Email -->
+            <a href="mailto:yassinahmed21106@gmail.com" class="contact-card">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+              </svg>
+              <span class="contact-channel-name">EMAIL</span>
+            </a>
+
+            <!-- WhatsApp -->
+            <a href="https://wa.me/201507823980" target="_blank" rel="noopener noreferrer" class="contact-card">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M3 21l1.65-3.8a9 9 0 1 1 3.4 2.9L3 21"/>
+                <path d="M9 10a.5.5 0 0 0 1 0V9a.5.5 0 0 0-1 0v1a5 5 0 0 0 5 5h1a.5.5 0 0 0 0-1h-1a.5.5 0 0 0 0 1"/>
+              </svg>
+              <span class="contact-channel-name">WHATSAPP</span>
+            </a>
+
+            <!-- TikTok (Requirement 8) -->
+            <a href="https://tiktok.com/@yassin.ahmed.21" target="_blank" rel="noopener noreferrer" class="contact-card">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5"/>
+              </svg>
+              <span class="contact-channel-name">TIKTOK</span>
+            </a>
+
+            <!-- Behance -->
+            <a href="https://www.behance.net/Yassin-Ahmed" target="_blank" rel="noopener noreferrer" class="contact-card">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M16 8h4M3 6h5a3 3 0 0 1 0 6H3V6zm0 6h5.5a3.5 3.5 0 0 1 0 7H3v-7zm11 1.5a3.5 3.5 0 1 0 3.5-3.5H14v7z"/>
+              </svg>
+              <span class="contact-channel-name">BEHANCE</span>
+            </a>
+
+            <!-- LinkedIn -->
+            <a href="https://www.linkedin.com/in/yassin-ahmed-b5b2bb279/" target="_blank" rel="noopener noreferrer" class="contact-card">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/>
+                <rect width="4" height="12" x="2" y="9"/><circle cx="4" cy="4" r="2"/>
+              </svg>
+              <span class="contact-channel-name">LINKEDIN</span>
+            </a>
+
+            <!-- Instagram -->
+            <a href="https://www.instagram.com/yassin_ahmed_2110" target="_blank" rel="noopener noreferrer" class="contact-card">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect width="20" height="20" x="2" y="2" rx="5" ry="5"/>
+                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/>
+              </svg>
+              <span class="contact-channel-name">INSTAGRAM</span>
+            </a>
+
+          </div>
+
+          <!-- Opens the "Start a Project" Contact-Choice Modal (Requirement 7) -->
+          <button type="button" class="btn btn-primary" data-open-choice-modal>
+            <span>START A PROJECT</span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M5 12h14M12 5l7 7-7 7"/>
+            </svg>
+          </button>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ==========================================================================
+       SITE FOOTER
+       ========================================================================== -->
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <p class="footer-copy">
+        © 2026 Yassin Ahmed. All rights reserved. Visual Identity & Graphic Design.
+      </p>
+      <button class="footer-back-to-top" id="backToTopBtn" type="button">
+        <span>BACK TO TOP</span>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 19V5M5 12l7-7 7 7"/>
+        </svg>
+      </button>
+    </div>
+  </footer>
+
+  <!-- ==========================================================================
+       MODALS:
+       1. START A PROJECT CHOICE MODAL (REQUIREMENT 7)
+       2. FULL CERTIFICATE PREVIEW MODAL (REQUIREMENT 6)
+       3. CASE STUDY VIEW MODAL (BEHANCE-STYLE)
+       ========================================================================== -->
+
+  <!-- 1. Start a Project Contact-Choice Modal -->
+  <div class="modal-overlay" id="choiceModal" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="choice-modal-card">
+      <button class="choice-modal-close" id="closeChoiceBtn" type="button" aria-label="Close modal">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 6L6 18M6 6l12 12"/>
+        </svg>
+      </button>
+
+      <span class="section-tag" style="margin-bottom: 8px;">Direct Contact</span>
+      <h3 class="choice-modal-title">START A PROJECT</h3>
+      <p class="choice-modal-sub">How would you like to contact me?</p>
+
+      <div class="choice-btn-group">
+        <a href="https://wa.me/201507823980" target="_blank" rel="noopener noreferrer" class="choice-btn choice-btn-whatsapp">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 21l1.65-3.8a9 9 0 1 1 3.4 2.9L3 21"/>
+            <path d="M9 10a.5.5 0 0 0 1 0V9a.5.5 0 0 0-1 0v1a5 5 0 0 0 5 5h1a.5.5 0 0 0 0-1h-1a.5.5 0 0 0 0 1"/>
+          </svg>
+          <span>WHATSAPP</span>
+        </a>
+
+        <a href="mailto:yassinahmed21106@gmail.com" class="choice-btn choice-btn-email">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+          </svg>
+          <span>EMAIL</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. Full Certificate Modal -->
+  <div class="modal-overlay" id="certModal" role="dialog" aria-modal="true" aria-hidden="true">
+    <div id="certModalContent"></div>
+  </div>
+
+  <!-- 3. Case Study Fullscreen View Modal -->
+  <div class="case-study-modal" id="caseStudyModal" role="dialog" aria-modal="true" aria-hidden="true">
+    <div id="caseStudyContent"></div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="projects-data.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
