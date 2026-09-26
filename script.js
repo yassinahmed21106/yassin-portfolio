@@ -34,7 +34,7 @@
   const LERP_FACTOR = 0.08;
 
   function formatFrameName(idx) {
-    return `${FRAME_PREFIX}${String(idx).padStart(3, '0')}.png`;
+    return `${FRAME_PREFIX}${String(idx).padStart(3, '0')}.jpg`;
   }
 
   function getFrameUrl(idx) {
@@ -173,6 +173,18 @@
     }
   }
 
+  let cachedHeroHeight = 0;
+  let cachedDocHeight = 0;
+
+  function updateMetrics() {
+    cachedHeroHeight = heroRunner ? heroRunner.offsetHeight - window.innerHeight : window.innerHeight;
+    cachedDocHeight = Math.max(
+      document.body.scrollHeight,
+      document.documentElement.scrollHeight,
+      document.body.offsetHeight
+    ) - window.innerHeight;
+  }
+
   /**
    * CONTINUOUS PORTRAIT EXPERIENCE ACROSS ENTIRE PAGE:
    * 1. In Hero (0 -> heroRunner height): head rotates smoothly from frame 0 to frame 95.
@@ -183,12 +195,9 @@
    */
   function updateScrollProgress() {
     const scrollY = window.pageYOffset || document.documentElement.scrollTop || 0;
-    const heroHeight = heroRunner ? heroRunner.offsetHeight - window.innerHeight : window.innerHeight;
-    const docHeight = Math.max(
-      document.body.scrollHeight,
-      document.documentElement.scrollHeight,
-      document.body.offsetHeight
-    ) - window.innerHeight;
+    if (!cachedHeroHeight) updateMetrics();
+    const heroHeight = cachedHeroHeight;
+    const docHeight = cachedDocHeight;
 
     // Toggle content-sections state to keep portrait visually integrated with high contrast
     if (scrollY > heroHeight * 0.65) {
@@ -252,44 +261,56 @@
   }
 
   async function preloadHeroFrames() {
+    // 1. Immediately load and draw frame 0 so the hero appears instantaneously
     await loadFrame(0);
     drawFrame(0);
-
-    // Initial keyframes for smooth early rotation
-    for (let i = 0; i < TOTAL_FRAMES; i += 10) {
-      loadFrame(i);
-    }
 
     if (loader) {
       loader.classList.add('hidden');
     }
 
-    // Schedule remaining background frame preloading cleanly when main thread is idle
+    // 2. Load sparse initial keyframes across the rotation range
+    const keyframes = [12, 24, 36, 48, 60, 72, 84, 96];
+    for (const kf of keyframes) {
+      if (kf < TOTAL_FRAMES) {
+        loadFrame(kf);
+      }
+    }
+
+    // 3. Defer remaining frames until after critical page assets and fonts have settled
+    const isMobile = window.innerWidth < 768 || (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4);
+    const step = isMobile ? 2 : 1;
+
     const loadRemaining = () => {
-      let idx = 0;
+      let idx = 1;
       function loadNextBatch() {
         let count = 0;
-        while (idx < TOTAL_FRAMES && count < 4) {
-          loadFrame(idx);
-          idx++;
+        while (idx < TOTAL_FRAMES && count < 2) {
+          if (!images[idx]) {
+            loadFrame(idx);
+          }
+          idx += step;
           count++;
         }
         if (idx < TOTAL_FRAMES) {
           if ('requestIdleCallback' in window) {
-            requestIdleCallback(loadNextBatch, { timeout: 1000 });
+            requestIdleCallback(loadNextBatch, { timeout: 1500 });
           } else {
-            setTimeout(loadNextBatch, 50);
+            setTimeout(loadNextBatch, 80);
           }
         }
       }
       loadNextBatch();
     };
 
-    if ('requestIdleCallback' in window) {
-      requestIdleCallback(loadRemaining, { timeout: 2000 });
-    } else {
-      setTimeout(loadRemaining, 300);
-    }
+    // Start background filling 2s after initial page render to keep initial bandwidth completely open
+    setTimeout(() => {
+      if ('requestIdleCallback' in window) {
+        requestIdleCallback(loadRemaining, { timeout: 2500 });
+      } else {
+        setTimeout(loadRemaining, 300);
+      }
+    }, 2000);
   }
 
   /* ==========================================================================
@@ -327,14 +348,11 @@
     card.setAttribute('aria-label', `View ${project.title} project details`);
 
     const indexNum = String(pIdx + 1).padStart(2, '0');
-    const loadingAttr = isPriority ? 'eager' : 'lazy';
-    const fetchPriorityAttr = isPriority ? ' fetchpriority="high"' : '';
-
     const coverSrc = project.coverThumbnail || project.cover;
 
     card.innerHTML = `
       <div class="card-media-wrap">
-        <img class="card-cover-img" src="${coverSrc}" alt="${project.title} cover" loading="${loadingAttr}"${fetchPriorityAttr} decoding="async">
+        <img class="card-cover-img" src="${coverSrc}" alt="${project.title} cover" loading="lazy" decoding="async" width="960" height="600">
         <div class="card-media-overlay"></div>
       </div>
       <div class="card-body">
@@ -394,14 +412,12 @@
       container.appendChild(groupSection);
       const grid = groupSection.querySelector(`#grid-${def.id}`);
 
-      // Initial batch (first 3 cards) rendered immediately.
-      // First category section's initial cards are marked priority (eager + fetchpriority="high")
+      // Render cards cleanly with lazy loading for all below-the-fold content
       const initialBatch = catProjects.slice(0, 3);
       const remainingBatch = catProjects.slice(3);
 
       initialBatch.forEach((project, pIdx) => {
-        const isPriority = (catIdx === 0 && pIdx < 3);
-        grid.appendChild(createProjectCardElement(project, pIdx, isPriority));
+        grid.appendChild(createProjectCardElement(project, pIdx, false));
       });
 
       // Render remaining cards smoothly on subsequent idle cycles
@@ -486,8 +502,7 @@
     // --- Media strip (Behance-style, 0px gaps) ---
     let mediaStripHtml = '';
     if (project.media && project.media.length) {
-      // Count image-type items only for lightbox index tracking
-      let imgLightboxIdx = 0;
+      // Unified media index: every item (image OR video) gets a sequential lb index
       const mediaItems = project.media.map((item, mIdx) => {
         if (item.type === 'video') {
           // preload="none" + data-src for true lazy video loading
@@ -495,25 +510,31 @@
           const verticalClass = item.vertical ? ' cs-media-vertical' : '';
           return `
             <div class="cs-media-item cs-media-video-item${verticalClass}">
-              <video data-video-src="${item.src}" muted loop playsinline preload="none" class="cs-media-video"></video>
+              <video data-video-src="${item.src}" data-unified-lb-idx="${mIdx}" muted loop playsinline preload="none" class="cs-media-video cs-media-openable"></video>
             </div>
           `;
         }
         // First 2 images load eagerly so the modal appears instantly with initial content;
-        // all subsequent images are truly lazy-loaded as the user scrolls
+        // all subsequent images are truly lazy-loaded with data-lazy-src as the user scrolls
         const isPriority = (mIdx < 2);
-        const loadAttr = isPriority ? 'eager' : 'lazy';
-        const fetchPriorityAttr = isPriority ? ' fetchpriority="high"' : '';
-        const thisLbIdx = imgLightboxIdx++;
         const isBannerGrid = project.galleryType === 'banner-grid';
         const isGrid = project.galleryType === 'grid';
         const isBannerItem = isBannerGrid && mIdx === 0;
         const itemClass = isBannerItem ? 'cs-media-item cs-banner-item' : (isBannerGrid || isGrid ? 'cs-media-item cs-grid-item' : 'cs-media-item');
-        return `
-          <div class="${itemClass}">
-            <img src="${item.src}" alt="${project.title} — image ${thisLbIdx + 1}" loading="${loadAttr}"${fetchPriorityAttr} decoding="async" class="cs-media-img" data-lightbox-src="${item.src}" data-lightbox-idx="${thisLbIdx}">
-          </div>
-        `;
+        
+        if (isPriority) {
+          return `
+            <div class="${itemClass}">
+              <img src="${item.src}" alt="${project.title} — media ${mIdx + 1}" loading="eager" fetchpriority="high" decoding="async" class="cs-media-img cs-media-openable" data-lightbox-src="${item.src}" data-unified-lb-idx="${mIdx}">
+            </div>
+          `;
+        } else {
+          return `
+            <div class="${itemClass}">
+              <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 9'%3E%3C/svg%3E" data-lazy-src="${item.src}" alt="${project.title} — media ${mIdx + 1}" loading="lazy" decoding="async" class="cs-media-img cs-media-openable" data-lightbox-src="${item.src}" data-unified-lb-idx="${mIdx}">
+            </div>
+          `;
+        }
       }).join('');
       let stripClass = 'cs-media-strip';
       if (project.galleryType === 'banner-grid') {
@@ -636,13 +657,52 @@
     const nextBtn = document.getElementById('nextProjectBtn');
     if (nextBtn) nextBtn.addEventListener('click', () => openCaseStudy(nextBtn.dataset.id));
 
-    // Wire up lightbox on images in the media strip
-    caseStudyContent.querySelectorAll('.cs-media-img[data-lightbox-src]').forEach((img) => {
-      img.addEventListener('click', () => openLightbox(img.dataset.lightboxSrc, parseInt(img.dataset.lightboxIdx || '-1', 10)));
+    // Wire up unified lightbox for ALL media (images + videos)
+    _buildUnifiedMediaIndex(project);
+    caseStudyContent.querySelectorAll('.cs-media-img.cs-media-openable').forEach((img) => {
+      img.addEventListener('click', () => openLightbox(null, parseInt(img.dataset.unifiedLbIdx || '0', 10)));
     });
 
     // Wire up inline videos & video modal
     setupProjectVideos();
+
+    // Wire up progressive lazy loading for gallery images below the fold
+    setupGalleryLazyImages();
+  }
+
+  let _galleryImgObserver = null;
+  function setupGalleryLazyImages() {
+    if (_galleryImgObserver) {
+      _galleryImgObserver.disconnect();
+      _galleryImgObserver = null;
+    }
+    const lazyImgs = caseStudyContent ? caseStudyContent.querySelectorAll('.cs-media-img[data-lazy-src]') : [];
+    if (!lazyImgs.length) return;
+
+    if ('IntersectionObserver' in window) {
+      _galleryImgObserver = new IntersectionObserver((entries, obs) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const img = entry.target;
+            const realSrc = img.dataset.lazySrc;
+            if (realSrc) {
+              img.src = realSrc;
+              img.removeAttribute('data-lazy-src');
+            }
+            obs.unobserve(img);
+          }
+        });
+      }, {
+        root: caseStudyModal,
+        rootMargin: '350px 0px 350px 0px'
+      });
+      lazyImgs.forEach((img) => _galleryImgObserver.observe(img));
+    } else {
+      lazyImgs.forEach((img) => {
+        img.src = img.dataset.lazySrc;
+        img.removeAttribute('data-lazy-src');
+      });
+    }
   }
 
   function closeCaseStudy() {
@@ -650,6 +710,10 @@
     if (_videoIntersectionObserver) {
       _videoIntersectionObserver.disconnect();
       _videoIntersectionObserver = null;
+    }
+    if (_galleryImgObserver) {
+      _galleryImgObserver.disconnect();
+      _galleryImgObserver = null;
     }
     if (caseStudyContent) {
       // Pause all videos and clear their src to release playback resources
@@ -667,10 +731,31 @@
   }
 
   /* ==========================================================================
-     LIGHTBOX — fullscreen image viewer
+     UNIFIED LIGHTBOX — fullscreen viewer for images AND videos
      ========================================================================== */
-  let _lightboxImgSrcs = [];
+
+  // Unified media array: [{type:'image'|'video', src:string}]
+  let _lightboxMedia = [];
   let _lightboxCurrentIdx = -1;
+
+  // Build the unified array from the current project's media definition
+  function _buildUnifiedMediaIndex(project) {
+    _lightboxMedia = [];
+    if (project && project.media && project.media.length) {
+      project.media.forEach((item) => {
+        if (item.type === 'video') {
+          _lightboxMedia.push({ type: 'video', src: item.src });
+        } else {
+          _lightboxMedia.push({ type: 'image', src: item.src });
+        }
+      });
+    } else if (project && project.gallery && project.gallery.length) {
+      // Fallback: old-style gallery (images only)
+      project.gallery.forEach((g) => {
+        _lightboxMedia.push({ type: 'image', src: g.src || g.url });
+      });
+    }
+  }
 
   function buildLightbox() {
     if (document.getElementById('portfolioLightbox')) return;
@@ -678,21 +763,23 @@
     lb.id = 'portfolioLightbox';
     lb.setAttribute('role', 'dialog');
     lb.setAttribute('aria-modal', 'true');
-    lb.setAttribute('aria-label', 'Image viewer');
+    lb.setAttribute('aria-label', 'Media viewer');
     lb.innerHTML = `
       <div class="lb-backdrop"></div>
       <button class="lb-close" id="lbClose" aria-label="Close">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
       </button>
-      <button class="lb-nav lb-prev" id="lbPrev" aria-label="Previous image">
+      <button class="lb-nav lb-prev" id="lbPrev" aria-label="Previous">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
       </button>
-      <div class="lb-img-wrap">
+      <div class="lb-media-wrap" id="lbMediaWrap">
         <img class="lb-img" id="lbImg" src="" alt="">
+        <video class="lb-video" id="lbVideo" playsinline controls preload="none"></video>
       </div>
-      <button class="lb-nav lb-next" id="lbNext" aria-label="Next image">
+      <button class="lb-nav lb-next" id="lbNext" aria-label="Next">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
       </button>
+      <div class="lb-counter" id="lbCounter"></div>
     `;
     document.body.appendChild(lb);
 
@@ -704,37 +791,79 @@
 
   function openLightbox(src, idx) {
     buildLightbox();
-    // Collect all image srcs currently shown in the case study
-    _lightboxImgSrcs = Array.from(
-      caseStudyContent.querySelectorAll('.cs-media-img[data-lightbox-src]')
-    ).map((el) => el.dataset.lightboxSrc);
-    _lightboxCurrentIdx = idx >= 0 ? idx : _lightboxImgSrcs.indexOf(src);
-    if (_lightboxCurrentIdx === -1) _lightboxCurrentIdx = 0;
-    _setLightboxImage(src);
+    // idx is the unified index (matches data-unified-lb-idx on each media element)
+    _lightboxCurrentIdx = (typeof idx === 'number' && idx >= 0) ? idx : 0;
+    _setLightboxMedia(_lightboxCurrentIdx);
     const lb = document.getElementById('portfolioLightbox');
     lb.classList.add('open');
   }
 
-  function _setLightboxImage(src) {
+  function _lbStopVideo() {
+    const vid = document.getElementById('lbVideo');
+    if (vid) {
+      vid.pause();
+      vid.removeAttribute('src');
+      try { vid.load(); } catch (_) {}
+      vid.style.display = 'none';
+    }
+  }
+
+  function _setLightboxMedia(idx) {
+    const item = _lightboxMedia[idx];
+    if (!item) return;
+
     const img = document.getElementById('lbImg');
+    const vid = document.getElementById('lbVideo');
     const prevBtn = document.getElementById('lbPrev');
     const nextBtn = document.getElementById('lbNext');
-    if (!img) return;
-    img.style.opacity = '0';
-    img.src = src;
-    img.onload = () => { img.style.opacity = '1'; };
-    if (prevBtn) prevBtn.style.display = _lightboxCurrentIdx <= 0 ? 'none' : '';
-    if (nextBtn) nextBtn.style.display = _lightboxCurrentIdx >= _lightboxImgSrcs.length - 1 ? 'none' : '';
+    const counter = document.getElementById('lbCounter');
+
+    // Update counter
+    if (counter) counter.textContent = `${idx + 1} / ${_lightboxMedia.length}`;
+
+    // Nav button visibility
+    if (prevBtn) prevBtn.style.display = idx <= 0 ? 'none' : '';
+    if (nextBtn) nextBtn.style.display = idx >= _lightboxMedia.length - 1 ? 'none' : '';
+
+    if (item.type === 'video') {
+      // Show video, hide image
+      if (img) img.style.display = 'none';
+      if (vid) {
+        vid.style.display = 'block';
+        vid.style.opacity = '0';
+        vid.src = item.src;
+        vid.preload = 'auto';
+        vid.muted = false;
+        vid.controls = true;
+        vid.load();
+        const playPromise = vid.play();
+        if (playPromise !== undefined) playPromise.catch(() => {});
+        // Fade in after a moment
+        requestAnimationFrame(() => { vid.style.opacity = '1'; });
+      }
+    } else {
+      // Show image, stop/hide video
+      _lbStopVideo();
+      if (img) {
+        img.style.display = 'block';
+        img.style.opacity = '0';
+        img.src = item.src;
+        img.onload = () => { img.style.opacity = '1'; };
+      }
+    }
   }
 
   function shiftLightbox(dir) {
     const next = _lightboxCurrentIdx + dir;
-    if (next < 0 || next >= _lightboxImgSrcs.length) return;
+    if (next < 0 || next >= _lightboxMedia.length) return;
+    // Stop video playback before navigating
+    _lbStopVideo();
     _lightboxCurrentIdx = next;
-    _setLightboxImage(_lightboxImgSrcs[next]);
+    _setLightboxMedia(next);
   }
 
   function closeLightbox() {
+    _lbStopVideo();
     const lb = document.getElementById('portfolioLightbox');
     if (lb) lb.classList.remove('open');
   }
@@ -843,15 +972,14 @@
       vid.playsInline = true;
       vid.removeAttribute('controls');
 
-      // Click to open fullscreen/modal viewer with sound
+      // Click to open the unified lightbox (image+video viewer)
       vid.addEventListener('click', (e) => {
         e.preventDefault();
         e.stopPropagation();
-        _activeInlineVideo = vid;
-        const currentPos = vid.currentTime || 0;
+        // Pause the inline preview before opening
         vid.pause();
-        const src = vid.getAttribute('src') || vid.dataset.videoSrc;
-        openVideoModal(src, currentPos);
+        const unifiedIdx = parseInt(vid.dataset.unifiedLbIdx || '0', 10);
+        openLightbox(null, unifiedIdx);
       });
     });
 
@@ -1754,8 +1882,10 @@
       closeCertModal();
       closeChoiceModal();
     }
-    if (e.key === 'ArrowLeft') shiftLightbox(-1);
-    if (e.key === 'ArrowRight') shiftLightbox(1);
+    if (isLightboxOpen()) {
+      if (e.key === 'ArrowLeft') shiftLightbox(-1);
+      if (e.key === 'ArrowRight') shiftLightbox(1);
+    }
   });
 
   if (caseStudyModal) {
@@ -1828,10 +1958,35 @@
   /* ==========================================================================
      9. INITIALIZATION
      ========================================================================== */
-  window.addEventListener('scroll', updateScrollProgress, { passive: true });
-  window.addEventListener('resize', resizeCanvas, { passive: true });
+  let scrollTicking = false;
+  function onThrottledScroll() {
+    if (!scrollTicking) {
+      scrollTicking = true;
+      requestAnimationFrame(() => {
+        updateScrollProgress();
+        scrollTicking = false;
+      });
+    }
+  }
+
+  let resizeTicking = false;
+  function onThrottledResize() {
+    if (!resizeTicking) {
+      resizeTicking = true;
+      requestAnimationFrame(() => {
+        updateMetrics();
+        resizeCanvas();
+        updateScrollProgress();
+        resizeTicking = false;
+      });
+    }
+  }
+
+  window.addEventListener('scroll', onThrottledScroll, { passive: true });
+  window.addEventListener('resize', onThrottledResize, { passive: true });
 
   detectFramePath().then(() => {
+    updateMetrics();
     resizeCanvas();
     updateScrollProgress();
     preloadHeroFrames();

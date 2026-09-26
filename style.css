@@ -5,8 +5,7 @@
    Continuous Cinematic Portrait Experience & Refined Atmosphere
    ========================================================================== */
 
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap');
-
+/* Fonts loaded via index.html <link> to prevent CSS render blocking */
 :root {
   /* Main Dark Palette: Deep Black / Charcoal (Replaced Navy/Blue) */
   --bg-primary: #050608;
@@ -202,6 +201,7 @@ body.in-content-sections #heroCanvas {
 .reveal.is-visible {
   opacity: 1;
   transform: translateY(0);
+  will-change: auto;
 }
 
 /* Staggered container */
@@ -209,11 +209,13 @@ body.in-content-sections #heroCanvas {
   opacity: 0;
   transform: translateY(24px);
   transition: opacity 0.7s var(--ease-editorial), transform 0.7s var(--ease-editorial);
+  will-change: opacity, transform;
 }
 
 .reveal-stagger.is-visible > * {
   opacity: 1;
   transform: translateY(0);
+  will-change: auto;
 }
 
 .reveal-stagger.is-visible > *:nth-child(1) { transition-delay: 0.05s; }
@@ -2773,6 +2775,7 @@ body.in-content-sections #heroCanvas {
 .cs-media-video {
   width: 100%;
   height: auto;
+  aspect-ratio: 16 / 9;
   display: block;
   background: #000;
   outline: none;
@@ -2899,7 +2902,7 @@ body.in-content-sections #heroCanvas {
   cursor: zoom-out;
 }
 
-.lb-img-wrap {
+.lb-media-wrap {
   position: relative;
   z-index: 1;
   max-width: 92vw;
@@ -2919,6 +2922,35 @@ body.in-content-sections #heroCanvas {
   border-radius: 4px;
   transition: opacity 0.25s ease;
   box-shadow: 0 32px 80px rgba(0, 0, 0, 0.8);
+}
+
+.lb-video {
+  max-width: 92vw;
+  max-height: 88vh;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  display: none;
+  border-radius: 4px;
+  background: #000;
+  box-shadow: 0 32px 80px rgba(0, 0, 0, 0.9), 0 0 30px rgba(0, 242, 254, 0.12);
+  outline: none;
+  transition: opacity 0.25s ease;
+}
+
+.lb-counter {
+  position: absolute;
+  bottom: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
+  font-family: var(--font-display, monospace);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.55);
+  pointer-events: none;
+  user-select: none;
 }
 
 .lb-close {
@@ -2970,6 +3002,10 @@ body.in-content-sections #heroCanvas {
 .lb-prev { left: 20px; }
 .lb-next { right: 20px; }
 
+.cs-media-video {
+  cursor: pointer;
+}
+
 @media (max-width: 768px) {
   .cs-media-strip {
     margin-left: 0;
@@ -2977,5 +3013,23 @@ body.in-content-sections #heroCanvas {
   }
 
   .lb-nav { display: none !important; }
+}
+
+/* Accessibility & Low-Power Motion Optimization */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto !important;
+  }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .reveal, .reveal-stagger > * {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+    will-change: auto !important;
+  }
 }
 
